@@ -1,4 +1,4 @@
-// pages/posts.js
+// pages/posts.tsx
 "use client";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -8,8 +8,10 @@ type Post = {
   title: string;
   content: string;
 };
-export default function Home({ id, title, content }: Post) {
+
+export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState<boolean>(true); // Add loading state
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -18,6 +20,8 @@ export default function Home({ id, title, content }: Post) {
         setPosts(response.data);
       } catch (error) {
         console.error("Error fetching the posts:", error);
+      } finally {
+        setLoading(false); // Set loading to false after fetching
       }
     };
 
@@ -27,7 +31,9 @@ export default function Home({ id, title, content }: Post) {
   return (
     <div>
       <h1>Blog Posts</h1>
-      {posts.length === 0 ? (
+      {loading ? (
+        <p>Loading posts...</p> // Display loading message while fetching
+      ) : posts.length === 0 ? (
         <p>No posts available</p>
       ) : (
         <ul>
