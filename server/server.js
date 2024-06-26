@@ -5,11 +5,13 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
-
-app.use(cors());
-
+const apiRouter = require("./routes/api");
 const PORT = process.env.PORT || 5000;
 const uri = process.env.DATABASEURI;
+
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 // Routes
 app.get("/", (req, res) => {
@@ -17,21 +19,20 @@ app.get("/", (req, res) => {
 });
 
 // Sample blog posts route
-app.get("/api/posts", (req, res) => {
-  const samplePosts = [
-    { id: 1, title: "First Post", content: "This is the first post" },
-    { id: 2, title: "Second Post", content: "This is the second post" },
-  ];
-  res.json(samplePosts);
-});
+// app.get("/api/posts", (req, res) => {
+//   const samplePosts = [
+//     { id: 1, title: "First Post", content: "This is the first post" },
+//     { id: 2, title: "Second Post", content: "This is the second post" },
+//   ];
+//   res.json(samplePosts);
+// });
+
+app.use("/api", apiRouter);
 
 // MongoDB connection
 async function connectDB() {
   try {
-    await mongoose.connect(uri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(uri);
     console.log("Connected to MongoDB");
   } catch (error) {
     console.error("Failed to connect to MongoDB:", error);
