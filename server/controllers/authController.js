@@ -73,6 +73,11 @@ const login = [
     .withMessage("Password must consist of at least 6 characters"),
   (req, res) => {
     try {
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Server error" });
