@@ -7,11 +7,13 @@ const signup = [
     .trim()
     .isLength({ min: 3 })
     .withMessage("Username must consist of at least 3 characters")
+    .escape()
     .notEmpty()
     .withMessage("Username cannot be empty!"),
   body("email", "email is required")
     .isEmail()
     .withMessage("Please provide a valid email")
+    .escape()
     .notEmpty()
     .withMessage("Email cannot be empty!"),
   body("password")
