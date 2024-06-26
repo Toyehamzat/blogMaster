@@ -1,6 +1,10 @@
-var bcrypt = require("bcryptjs");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const { body, validationResult } = require("express-validator");
 const User = require("../models/user");
+
+// Secret key for JWT
+const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key";
 
 const signup = [
   body("username", "username is required")
@@ -57,7 +61,6 @@ const signup = [
     }
   },
 ];
-
 const login = [
   body("username", "username is required")
     .trim()
@@ -71,18 +74,39 @@ const login = [
     .isLength({ min: 6 })
     .escape()
     .withMessage("Password must consist of at least 6 characters"),
-  (req, res) => {
-    try {
-      const errors = validationResult(req);
+  async (req, res) => {
+    const errors = validationResult(req);
 
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const { username, password } = req.body;
+      const user = await User.findOne({ username });
+
+      if (!user) {
+        return res.status(400).json({ error: "Invalid username or password" });
       }
+
+      const isMatch = await bcrypt.compare(password, user.password);
+
+      if (!isMatch) {
+        return res.status(400).json({ error: "Invalid username or password" });
+      }
+
+      const token = jwt.sign(
+        { id: user._id, username: user.username },
+        JWT_SECRET,
+        {
+          expiresIn: "1h",
+        }
+      );
+
+      res.status(200).json({ message: "Login successful", token });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Server error" });
-    } finally {
-      res.status(200).json({ message: "Login successful" });
     }
   },
 ];
