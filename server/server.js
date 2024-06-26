@@ -11,6 +11,7 @@ const uri = process.env.DATABASEURI;
 const User = require("./models/user");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
+const jwt = require("jsonwebtoken");
 
 app.use(cors());
 app.use(express.json());
