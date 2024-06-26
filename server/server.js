@@ -12,10 +12,12 @@ const User = require("./models/user");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const jwt = require("jsonwebtoken");
+const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(passport.initialize());
 
 // Routes
 app.get("/", (req, res) => {
@@ -46,6 +48,25 @@ passport.use(
       return done(null, user);
     } catch (err) {
       return done(err);
+    }
+  })
+);
+
+const opts = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.JWT_SECRET,
+};
+
+passport.use(
+  new JwtStrategy(opts, async (jwt_payload, done) => {
+    try {
+      const user = await User.findById(jwt_payload.id);
+      if (user) {
+        return done(null, user);
+      }
+      return done(null, false);
+    } catch (err) {
+      return done(err, false);
     }
   })
 );
