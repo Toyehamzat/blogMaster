@@ -58,4 +58,28 @@ const signup = [
   },
 ];
 
-module.exports = { signup };
+const login = [
+  body("username", "username is required")
+    .trim()
+    .isLength({ min: 3 })
+    .withMessage("Username must consist of at least 3 characters")
+    .escape()
+    .notEmpty()
+    .withMessage("Username cannot be empty!"),
+  body("password")
+    .trim()
+    .isLength({ min: 6 })
+    .escape()
+    .withMessage("Password must consist of at least 6 characters"),
+  (req, res) => {
+    try {
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Server error" });
+    } finally {
+      res.status(200).json({ message: "Login successful" });
+    }
+  },
+];
+
+module.exports = { signup, login };
