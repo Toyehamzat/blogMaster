@@ -41,15 +41,16 @@ const signup = [
     }
 
     try {
-      const existingUser = await User.findOne({ username: req.body.username });
+      const { username, email, password } = req.body;
+      const existingUser = await User.findOne({ username });
       if (existingUser) {
         return res.status(400).json({ error: "Username already exists" });
       }
 
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      const hashedPassword = await bcrypt.hash(password, 10);
       const user = new User({
-        username: req.body.username,
-        email: req.body.email,
+        username,
+        email,
         password: hashedPassword,
       });
 
@@ -61,6 +62,7 @@ const signup = [
     }
   },
 ];
+
 const login = [
   body("username", "username is required")
     .trim()
@@ -89,7 +91,11 @@ const login = [
         return res.status(400).json({ error: "Invalid username or password" });
       }
 
+      console.log("Stored Hashed Password:", user.password);
+      console.log("Provided Password:", password);
+
       const isMatch = await bcrypt.compare(password, user.password);
+      console.log("Password comparison result:", isMatch);
 
       if (!isMatch) {
         return res.status(400).json({ error: "Invalid username or password" });
