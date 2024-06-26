@@ -91,11 +91,11 @@ const login = [
         return res.status(400).json({ error: "Invalid username or password" });
       }
 
-      console.log("Stored Hashed Password:", user.password);
-      console.log("Provided Password:", password);
+      //   console.log("Stored Hashed Password:", user.password);
+      //   console.log("Provided Password:", password);
 
       const isMatch = await bcrypt.compare(password, user.password);
-      console.log("Password comparison result:", isMatch);
+      //   console.log("Password comparison result:", isMatch);
 
       if (!isMatch) {
         return res.status(400).json({ error: "Invalid username or password" });
