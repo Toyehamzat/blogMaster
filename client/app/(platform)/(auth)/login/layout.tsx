@@ -1,12 +1,16 @@
-import { Metadata } from "next";
-import React from "react";
-
+import type { Metadata } from "next";
 export const metadata: Metadata = {
-  title: "Login",
+  title: "login",
 };
 
-const layout = ({ children }: { children: React.ReactNode }) => {
-  return <div>{children}</div>;
-};
-
-export default layout;
+export default function loginLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="h-full flex items-center justify-center py-36">
+      {children}
+    </div>
+  );
+}

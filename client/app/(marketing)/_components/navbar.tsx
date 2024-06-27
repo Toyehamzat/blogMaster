@@ -10,14 +10,14 @@ export const Navbar = () => {
         <div className="font-extrabold">BlogMaster</div>
         <div className="space-x-4 md:block md:w-auto flex items-center justify-between w-full">
           <Button size="sm" variant="outline" asChild>
-            <Link href="/sign-in">Login</Link>
+            <Link href="/login">Login</Link>
           </Button>
           <Button
-            className=" bg-blue-600  hover:bg-blue-900 transition"
+            className="bg-amber-700 hover:bg-amber-800 transition"
             size="sm"
             asChild
           >
-            <Link href="/sign-up">signup for free</Link>
+            <Link href="/signup">signup for free</Link>
           </Button>
         </div>
       </div>
