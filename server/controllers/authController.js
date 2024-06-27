@@ -5,6 +5,8 @@ const User = require("../models/user");
 
 // Secret key for JWT
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key";
+// In-memory token blacklist (use Redis or a database in production)
+let tokenBlacklist = [];
 
 const signup = [
   body("username", "username is required")
@@ -56,6 +58,7 @@ const signup = [
 
       await user.save();
       res.status(201).json({ message: "User registered successfully" });
+      res.redirect("/login");
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Server error" });
@@ -110,6 +113,7 @@ const login = [
       );
 
       res.status(200).json({ message: "Login successful", token });
+      res.redirect("/");
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Server error" });
@@ -117,4 +121,34 @@ const login = [
   },
 ];
 
-module.exports = { signup, login };
+// Logout Controller
+const logout = (req, res) => {
+  //   try {
+  //     // Check if authorization header exists
+  //     if (!req.headers.authorization) {
+  //       return res.status(401).json({ error: "Authorization header missing" });
+  //     }
+
+  //     // Invalidate the JWT token
+  //     const token = req.headers.authorization.split(" ")[1];
+  //     tokenBlacklist.push(token);
+
+  //     res
+  //       .status(200)
+  //       .json({ message: "Logout successful. Redirecting to login..." });
+  //     // Redirect to login
+  //     res.redirect("/login");
+  //   } catch (error) {
+  //     console.error(error);
+  //     res.status(500).json({ error: "Server error" });
+  //   }
+
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/login");
+  });
+};
+
+module.exports = { signup, login, logout };
