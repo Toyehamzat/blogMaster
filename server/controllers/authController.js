@@ -34,6 +34,7 @@ const signup = [
       if (value !== req.body.password) {
         throw new Error("Passwords must be the same");
       }
+
       return true;
     }),
   async (req, res) => {
@@ -46,7 +47,7 @@ const signup = [
       const { username, email, password } = req.body;
       const existingUser = await User.findOne({ username });
       if (existingUser) {
-        return res.status(400).json({ error: "Username already exists" });
+        return res.status(400).json({ message: "Username already exists" });
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
