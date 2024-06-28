@@ -103,7 +103,7 @@ export default function SignUp({ data }: SignUpProps) {
               htmlFor="confirm_password"
               className="block text-sm font-medium text-gray-700"
             >
-              Confirm Passwords
+              Confirm Password
             </label>
             <input
               id="confirm_password"
