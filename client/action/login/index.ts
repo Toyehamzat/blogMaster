@@ -1,38 +1,35 @@
-import { createSafeAction, ActionState } from "@/lib/create-safe-action";
-import { LoginSchema } from "./schema"; // Adjust the import according to your file structure
-import { z } from "zod";
+import { createSafeAction } from "@/lib/create-safe-action";
+import { LoginSchema } from "./schema";
+import api from "@/utils/api"; // Import the configured api instance
+import { toast } from "sonner";
 import { InputType, ReturnType } from "./types";
 
-type LoginOutput = { token: string; message: string }; // Adjust according to your API response
-
-const url = "http://localhost:5000/api";
-
 const handler = async (data: InputType): Promise<ReturnType> => {
-  const validatedData = data;
   try {
-    const response = await fetch(`${url}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(validatedData),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
+    const response = await api.post("/login", data);
+    return { data: response.data };
+  } catch (error: any) {
+    if (error.response && error.response.data && error.response.data.errors) {
+      error.response.data.errors.forEach((err: any) => {
+        toast.error(err.msg);
+      });
       return {
-        error: errorData.message,
+        error: "Login failed",
+        fieldErrors: error.response.data.errors.reduce(
+          (acc: any, curr: any) => {
+            acc[curr.param] = [curr.msg];
+            return acc;
+          },
+          {}
+        ),
+      };
+    } else {
+      toast.error("An unexpected error occurred");
+      return {
+        error: "An unexpected error occurred",
       };
     }
-
-    const data: LoginOutput = await response.json();
-    return {
-      data,
-    };
-  } catch (error) {
-    return {
-      error: "An error occurred during login",
-    };
   }
 };
+
 export const loginAction = createSafeAction(LoginSchema, handler);
