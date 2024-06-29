@@ -1,40 +1,34 @@
-import { createSafeAction, ActionState } from "@/lib/create-safe-action";
+import { createSafeAction } from "@/lib/create-safe-action";
 import { SignUpSchema } from "./schema";
-import { redirect } from "next/navigation";
-import { z } from "zod";
+import api from "@/utils/api";
+import { toast } from "sonner";
 import { InputType, ReturnType } from "./types";
 
-// type SignupInput = z.infer<typeof SignUpSchema>;
-type SignupOutput = { message: string }; // Adjust according to your API response
-
-const url = "http://localhost:5000/api";
-
 const handler = async (data: InputType): Promise<ReturnType> => {
-  const datas = data;
   try {
-    const response = await fetch(`${url}/signup`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(datas),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
+    const response = await api.post("/signup", data);
+    return { data: response.data };
+  } catch (error: any) {
+    if (error.response && error.response.data && error.response.data.errors) {
+      error.response.data.errors.forEach((err: any) => {
+        toast.error(err.msg);
+      });
       return {
-        error: error.message,
+        error: error.response.data.message || "Signup failed",
+        fieldErrors: error.response.data.errors.reduce(
+          (acc: any, curr: any) => {
+            acc[curr.param] = [curr.msg];
+            return acc;
+          },
+          {}
+        ),
+      };
+    } else {
+      toast.error("An unexpected error occurred");
+      return {
+        error: "An unexpected error occurred",
       };
     }
-
-    const data: SignupOutput = await response.json();
-    return {
-      data,
-    };
-  } catch (error) {
-    return {
-      error: "An error occurred during signup",
-    };
   }
 };
 
