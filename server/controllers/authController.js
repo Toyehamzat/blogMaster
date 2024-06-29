@@ -59,7 +59,6 @@ const signup = [
 
       await user.save();
       res.status(201).json({ message: "User registered successfully" });
-      res.redirect("/login");
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Server error" });
@@ -95,11 +94,7 @@ const login = [
         return res.status(400).json({ error: "Invalid username or password" });
       }
 
-      //   console.log("Stored Hashed Password:", user.password);
-      //   console.log("Provided Password:", password);
-
       const isMatch = await bcrypt.compare(password, user.password);
-      //   console.log("Password comparison result:", isMatch);
 
       if (!isMatch) {
         return res.status(400).json({ error: "Invalid username or password" });
@@ -114,7 +109,6 @@ const login = [
       );
 
       res.status(200).json({ message: "Login successful", token });
-      res.redirect("/");
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Server error" });
@@ -122,34 +116,20 @@ const login = [
   },
 ];
 
-// Logout Controller
 const logout = (req, res) => {
-  //   try {
-  //     // Check if authorization header exists
-  //     if (!req.headers.authorization) {
-  //       return res.status(401).json({ error: "Authorization header missing" });
-  //     }
-
-  //     // Invalidate the JWT token
-  //     const token = req.headers.authorization.split(" ")[1];
-  //     tokenBlacklist.push(token);
-
-  //     res
-  //       .status(200)
-  //       .json({ message: "Logout successful. Redirecting to login..." });
-  //     // Redirect to login
-  //     res.redirect("/login");
-  //   } catch (error) {
-  //     console.error(error);
-  //     res.status(500).json({ error: "Server error" });
-  //   }
-
-  req.logout((err) => {
-    if (err) {
-      return next(err);
+  try {
+    if (!req.headers.authorization) {
+      return res.status(401).json({ error: "Authorization header missing" });
     }
-    res.redirect("/login");
-  });
+
+    const token = req.headers.authorization.split(" ")[1];
+    tokenBlacklist.push(token);
+
+    res.status(200).json({ message: "Logout successful" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
 };
 
 module.exports = { signup, login, logout };
