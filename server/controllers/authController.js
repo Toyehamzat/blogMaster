@@ -9,14 +9,14 @@ const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key";
 let tokenBlacklist = [];
 
 const signup = [
-  body("username", "username is required")
+  body("username", "Username is required")
     .trim()
     .isLength({ min: 3 })
     .withMessage("Username must consist of at least 3 characters")
     .escape()
     .notEmpty()
     .withMessage("Username cannot be empty!"),
-  body("email", "email is required")
+  body("email", "Email is required")
     .isEmail()
     .withMessage("Please provide a valid email")
     .escape()
@@ -46,7 +46,7 @@ const signup = [
       const { username, email, password } = req.body;
       const existingUser = await User.findOne({ username });
       if (existingUser) {
-        return res.status(400).json({ message: "Username already exists" });
+        return res.status(400).json({ error: "Username already exists" });
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -57,7 +57,9 @@ const signup = [
       });
 
       await user.save();
-      res.status(201).json({ message: "User registered successfully" });
+      res
+        .status(201)
+        .json({ message: "Sign up successful, Log in to continue" });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Server error" });
@@ -90,13 +92,17 @@ const login = [
       const user = await User.findOne({ username });
 
       if (!user) {
-        return res.status(400).json({ error: "Invalid username or password" });
+        return res.status(400).json({
+          errors: [{ param: "username", msg: "Invalid username or password" }],
+        });
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
 
       if (!isMatch) {
-        return res.status(400).json({ error: "Invalid username or password" });
+        return res.status(400).json({
+          errors: [{ param: "password", msg: "Invalid username or password" }],
+        });
       }
 
       const token = jwt.sign(
@@ -116,12 +122,11 @@ const login = [
 ];
 
 const logout = (req, res) => {
-  req.logout((err) => {
-    if (err) {
-      return next(err);
-    }
-    res.redirect("/login");
-  });
+  const token = req.headers.authorization?.split(" ")[1];
+  if (token) {
+    tokenBlacklist.push(token);
+  }
+  res.status(200).json({ message: "Logout successful" });
 };
 
 module.exports = { signup, login, logout };
