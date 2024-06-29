@@ -34,7 +34,6 @@ const signup = [
       if (value !== req.body.password) {
         throw new Error("Passwords must be the same");
       }
-
       return true;
     }),
   async (req, res) => {
@@ -117,19 +116,12 @@ const login = [
 ];
 
 const logout = (req, res) => {
-  try {
-    if (!req.headers.authorization) {
-      return res.status(401).json({ error: "Authorization header missing" });
+  req.logout((err) => {
+    if (err) {
+      return next(err);
     }
-
-    const token = req.headers.authorization.split(" ")[1];
-    tokenBlacklist.push(token);
-
-    res.status(200).json({ message: "Logout successful" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Server error" });
-  }
+    res.redirect("/login");
+  });
 };
 
 module.exports = { signup, login, logout };
