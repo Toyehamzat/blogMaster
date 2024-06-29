@@ -2,25 +2,27 @@
 import { useAction } from "@/hook/useAction";
 import { loginAction } from "@/action/login";
 import { toast } from "sonner";
+import { useUserStore } from "@/stores/useAuthStore";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 const LoginForm = () => {
-  const { execute, fieldErrors, error, data, isLoading } = useAction(
-    loginAction,
-    {
-      onSuccess: (data) => {
-        // Handle success, e.g., store token and redirect
-        toast.success(data.message);
-        console.log(data.message);
-        localStorage.setItem("token", data.token);
-        window.location.href = "/";
-      },
-      onError: (error) => {
-        // Handle error
-        console.error(error);
-      },
-    }
-  );
+  const { execute, fieldErrors, error, isLoading } = useAction(loginAction, {
+    onSuccess: (data) => {
+      toast.success(data.message);
+      console.log(data.message);
+      localStorage.setItem("token", data.token);
+      userLogin();
+      router.push("/");
+    },
+    onError: (error) => {
+      toast.error(error);
+      console.error(error);
+    },
+  });
+
+  const userLogin = useUserStore((state) => state.userLogin);
+  const router = useRouter();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -36,43 +38,31 @@ const LoginForm = () => {
     <div className=" flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
         <h2 className="text-2xl font-semibold mb-6 text-center">Login</h2>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label
-              htmlFor="username"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Username
-            </label>
+        <form onSubmit={handleSubmit} className="max-w-sm mx-auto p-4">
+          <div className="mb-4">
+            <label className="block text-gray-700">Username</label>
             <input
-              id="username"
-              name="username"
               type="text"
+              name="username"
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
             />
             {fieldErrors?.username && (
-              <span className="text-sm text-red-600">
+              <span className="text-red-600 text-sm">
                 {fieldErrors.username[0]}
               </span>
             )}
           </div>
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Password
-            </label>
+          <div className="mb-4">
+            <label className="block text-gray-700">Password</label>
             <input
-              id="password"
-              name="password"
               type="password"
+              name="password"
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
             />
             {fieldErrors?.password && (
-              <span className="text-sm text-red-600">
+              <span className="text-red-600 text-sm">
                 {fieldErrors.password[0]}
               </span>
             )}
@@ -80,18 +70,16 @@ const LoginForm = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
-              isLoading ? "bg-indigo-400" : "bg-indigo-600 hover:bg-indigo-700"
-            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
+            className={`w-full px-4 py-2 bg-blue-500 text-white rounded-md ${
+              isLoading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
             {isLoading ? "Logging in..." : "Login"}
           </button>
-          {error && (
-            <div className="mt-2 text-center text-sm text-red-600">{error}</div>
-          )}
+          {error && <div className="text-red-600 text-sm mt-2">{error}</div>}
         </form>
         <div>
-          You dont have an account? <Link href="/signup">Sign Up </Link>
+          dont have an account ? <Link href="/signup">signup </Link>
         </div>
       </div>
     </div>
