@@ -1,9 +1,18 @@
-// import { Logo } from "@/components/logo";
+"use client";
 import { Button } from "@/components/ui/button";
+import { useUserStore } from "@/stores/useAuthStore";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
-
+import LogoutButton from "./logOutbtn";
 export const Navbar = () => {
+  const logout = useUserStore((state) => state.logout);
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    router.push("/login");
+  };
   return (
     <div className="fixed top-0 w-full h-14 px-4 border-b shadow-sm bg-white flex items-center">
       <div className="md:max-w-screen-2xl mx-auto flex items-center w-full justify-between">
@@ -19,6 +28,7 @@ export const Navbar = () => {
           >
             <Link href="/signup">signup for free</Link>
           </Button>
+          <LogoutButton />
         </div>
       </div>
     </div>
