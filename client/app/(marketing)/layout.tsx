@@ -4,7 +4,7 @@ import { Navbar } from "./_components/navbar";
 import { Footer } from "./_components/footer";
 
 export const metadata: Metadata = {
-  title: "Marketing ",
+  title: "BlogMaster ",
 };
 
 export default function MarketingLayout({
