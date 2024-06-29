@@ -4,6 +4,7 @@ import { useAction } from "@/hook/useAction";
 import { signupAction } from "@/action/signup";
 import { toast } from "sonner";
 import { InputType } from "@/action/signup/types";
+import Link from "next/link";
 
 interface SignUpProps {
   data: InputType;
@@ -137,6 +138,9 @@ export default function SignUp({ data }: SignUpProps) {
             )}
           </div>
         </form>
+        <div>
+          have an account already? <Link href="/login">log in </Link>
+        </div>
       </div>
     </div>
   );
