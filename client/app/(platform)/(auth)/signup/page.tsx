@@ -5,17 +5,19 @@ import { signupAction } from "@/action/signup";
 import { toast } from "sonner";
 import { InputType } from "@/action/signup/types";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface SignUpProps {
   data: InputType;
 }
 
 export default function SignUp({ data }: SignUpProps) {
+  const router = useRouter();
   const { execute, fieldErrors, error, isLoading } = useAction(signupAction, {
     onSuccess: (data) => {
       toast.success(data.message);
       console.log(data.message);
-      window.location.href = "/login";
+      router.push("/login");
     },
     onError: (error) => {
       toast.error(error);
