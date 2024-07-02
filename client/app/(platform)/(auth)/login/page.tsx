@@ -6,13 +6,23 @@ import { useUserStore } from "@/stores/useAuthStore";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+type LoginResponse = {
+  message: string;
+  token: string;
+  user: {
+    id: string;
+    username: string;
+  };
+};
+
 const LoginForm = () => {
+  const userLogin = useUserStore((state) => state.userLogin);
+  const router = useRouter();
+
   const { execute, fieldErrors, error, isLoading } = useAction(loginAction, {
-    onSuccess: (data) => {
+    onSuccess: (data: LoginResponse) => {
       toast.success(data.message);
-      console.log(data.message);
-      localStorage.setItem("token", data.token);
-      userLogin();
+      userLogin(data.user, data.token);
       router.push("/");
     },
     onError: (error) => {
@@ -20,9 +30,6 @@ const LoginForm = () => {
       console.error(error);
     },
   });
-
-  const userLogin = useUserStore((state) => state.userLogin);
-  const router = useRouter();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -79,7 +86,7 @@ const LoginForm = () => {
           {error && <div className="text-red-600 text-sm mt-2">{error}</div>}
         </form>
         <div>
-          dont have an account ? <Link href="/signup">signup </Link>
+          dont have an account? <Link href="/signup">Sign up</Link>
         </div>
       </div>
     </div>
