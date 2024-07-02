@@ -14,7 +14,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
         toast.error(err.message);
       });
       return {
-        error: "Sign up failed",
+        error: "Registration failed",
         fieldErrors: error.response.data.errors.reduce(
           (acc: any, curr: any) => {
             acc[curr.param] = [curr.message];
