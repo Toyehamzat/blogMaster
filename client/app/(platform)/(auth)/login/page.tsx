@@ -5,6 +5,10 @@ import { toast } from "sonner";
 import { useUserStore } from "@/stores/useAuthStore";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ElementRef, useRef } from "react";
+import { useEventListener } from "usehooks-ts";
+import { FormInput } from "@/components/form/form-input";
+import { FormErrors } from "@/components/form/form-errors";
 
 type LoginResponse = {
   message: string;
@@ -31,6 +35,21 @@ const LoginForm = () => {
     },
   });
 
+  const formRef = useRef<ElementRef<"form">>(null);
+  const inputRef = useRef<ElementRef<"input">>(null);
+
+  const onBlur = () => {
+    formRef.current?.requestSubmit();
+  };
+
+  const onKeyDown = (e: KeyboardEvent) => {
+    if (e.key === "Escape") {
+      formRef.current?.requestSubmit();
+    }
+  };
+
+  useEventListener("keydown", onKeyDown);
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -43,36 +62,40 @@ const LoginForm = () => {
 
   return (
     <div className=" flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
+      <div className="bg-white p-12 rounded shadow-md w-full max-w-md">
         <h2 className="text-2xl font-semibold mb-6 text-center">Login</h2>
-        <form onSubmit={handleSubmit} className="max-w-sm mx-auto p-4">
+        <form
+          ref={formRef}
+          onSubmit={handleSubmit}
+          className="max-w-xl mx-auto p-4"
+        >
           <div className="mb-4">
-            <label className="block text-gray-700">Username</label>
-            <input
+            <FormInput
+              onBlur={onBlur}
+              ref={inputRef}
+              disabled={isLoading}
               type="text"
+              id="username"
               name="username"
+              label="Username"
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              className="text-sm px-[10px] py-5 h-7 font-medium  hover:border-input focus:border-input transition truncate bg-transparent focus:bg-white"
             />
-            {fieldErrors?.username && (
-              <span className="text-red-600 text-sm">
-                {fieldErrors.username[0]}
-              </span>
-            )}
+            <FormErrors id="username" errors={fieldErrors} />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Password</label>
-            <input
+            <FormInput
+              onBlur={onBlur}
+              ref={inputRef}
+              disabled={isLoading}
               type="password"
+              id="password"
               name="password"
+              label="Password"
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              className="text-sm px-[10px] py-5 h-7 font-medium  hover:border-input focus:border-input transition truncate bg-transparent focus:bg-white"
             />
-            {fieldErrors?.password && (
-              <span className="text-red-600 text-sm">
-                {fieldErrors.password[0]}
-              </span>
-            )}
+            <FormErrors id="password" errors={fieldErrors} />
           </div>
           <button
             type="submit"
@@ -83,10 +106,12 @@ const LoginForm = () => {
           >
             {isLoading ? "Logging in..." : "Login"}
           </button>
-          {error && <div className="text-red-600 text-sm mt-2">{error}</div>}
         </form>
-        <div>
-          dont have an account? <Link href="/signup">Sign up</Link>
+        <div className="mt-1">
+          Don&apos;t have an account?{" "}
+          <Link href="/signup" className="text-blue-500">
+            Sign up
+          </Link>
         </div>
       </div>
     </div>
