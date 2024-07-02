@@ -61,7 +61,7 @@ const signup = [
       await user.save();
       res
         .status(201)
-        .json({ message: "Sign up successful, Log in to continue" });
+        .json({ message: "Registration successful, Log in to continue" });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Server error" });
