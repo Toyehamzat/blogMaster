@@ -46,7 +46,9 @@ const signup = [
       const { username, email, password } = req.body;
       const existingUser = await User.findOne({ username });
       if (existingUser) {
-        return res.status(400).json({ error: "Username already exists" });
+        return res.status(400).json({
+          errors: [{ param: "username", message: "user already exists!" }],
+        });
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -93,7 +95,9 @@ const login = [
 
       if (!user) {
         return res.status(400).json({
-          errors: [{ param: "username", msg: "Invalid username or password" }],
+          errors: [
+            { param: "username", message: "Invalid username or password" },
+          ],
         });
       }
 
@@ -101,7 +105,9 @@ const login = [
 
       if (!isMatch) {
         return res.status(400).json({
-          errors: [{ param: "password", msg: "Invalid username or password" }],
+          errors: [
+            { param: "password", message: "Invalid username or password" },
+          ],
         });
       }
 
@@ -113,7 +119,7 @@ const login = [
         }
       );
 
-      res.status(200).json({ message: "Login successful", token });
+      res.status(200).json({ message: "Login successful", token, user });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Server error" });
