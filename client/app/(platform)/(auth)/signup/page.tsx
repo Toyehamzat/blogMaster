@@ -133,11 +133,11 @@ export default function SignUp({ data }: SignUpProps) {
             >
               {isLoading ? "Signing up..." : "Sign up"}
             </button>
-            {error && (
+            {/* {error && (
               <div className="mt-2 text-center text-sm text-red-600">
                 {error}
               </div>
-            )}
+            )} */}
           </div>
         </form>
         <div>
