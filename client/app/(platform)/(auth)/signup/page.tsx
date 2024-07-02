@@ -6,6 +6,10 @@ import { toast } from "sonner";
 import { InputType } from "@/action/signup/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { FormInput } from "@/components/form/form-input";
+import { ElementRef, useRef } from "react";
+import { useEventListener } from "usehooks-ts";
+import { FormErrors } from "@/components/form/form-errors";
 
 interface SignUpProps {
   data: InputType;
@@ -23,6 +27,20 @@ export default function SignUp({ data }: SignUpProps) {
       toast.error(error);
     },
   });
+  const formRef = useRef<ElementRef<"form">>(null);
+  const inputRef = useRef<ElementRef<"input">>(null);
+
+  const onBlur = () => {
+    formRef.current?.requestSubmit();
+  };
+
+  const onKeyDown = (e: KeyboardEvent) => {
+    if (e.key === "Escape") {
+      formRef.current?.requestSubmit();
+    }
+  };
+
+  useEventListener("keydown", onKeyDown);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -38,110 +56,82 @@ export default function SignUp({ data }: SignUpProps) {
 
   return (
     <div className="flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-semibold mb-6 text-center">Sign Up</h2>
+      <div className="bg-white p-16 rounded shadow-md w-full max-w-md">
+        <h2 className="text-2xl font-semibold mb-6 text-center">Register</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label
-              htmlFor="username"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Username
-            </label>
-            <input
+            <FormInput
+              onBlur={onBlur}
+              ref={inputRef}
+              disabled={isLoading}
+              type="username"
               id="username"
               name="username"
-              type="text"
+              label="Username"
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="text-sm px-[10px] py-5 h-7 font-medium  hover:border-input focus:border-input transition truncate bg-transparent focus:bg-white"
             />
-            {fieldErrors?.username && (
-              <span className="text-sm text-red-600">
-                {fieldErrors.username[0]}
-              </span>
-            )}
+            <FormErrors id="username" errors={fieldErrors} />
           </div>
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email
-            </label>
-            <input
+            <FormInput
+              onBlur={onBlur}
+              ref={inputRef}
+              disabled={isLoading}
+              type="email"
               id="email"
               name="email"
-              type="email"
+              label="Email"
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="text-sm px-[10px] py-5 h-7 font-medium  hover:border-input focus:border-input transition truncate bg-transparent focus:bg-white"
             />
-            {fieldErrors?.email && (
-              <span className="text-sm text-red-600">
-                {fieldErrors.email[0]}
-              </span>
-            )}
+            <FormErrors id="email" errors={fieldErrors} />
           </div>
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Password
-            </label>
-            <input
+            <FormInput
+              onBlur={onBlur}
+              ref={inputRef}
+              disabled={isLoading}
+              type="password"
               id="password"
               name="password"
-              type="password"
+              label="Password"
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="text-sm px-[10px] py-5 h-7 font-medium  hover:border-input focus:border-input transition truncate bg-transparent focus:bg-white"
             />
-            {fieldErrors?.password && (
-              <span className="text-sm text-red-600">
-                {fieldErrors.password[0]}
-              </span>
-            )}
+            <FormErrors id="password" errors={fieldErrors} />
           </div>
           <div>
-            <label
-              htmlFor="confirm_password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Confirm Password
-            </label>
-            <input
+            <FormInput
+              onBlur={onBlur}
+              ref={inputRef}
+              disabled={isLoading}
+              type="password"
               id="confirm_password"
               name="confirm_password"
-              type="password"
+              label="Confirm password"
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="text-sm px-[10px] py-5 h-7 font-medium  hover:border-input focus:border-input transition truncate bg-transparent focus:bg-white"
             />
-            {fieldErrors?.confirm_password && (
-              <span className="text-sm text-red-600">
-                {fieldErrors.confirm_password[0]}
-              </span>
-            )}
+            <FormErrors id="confirm_password" errors={fieldErrors} />
           </div>
           <div>
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
-                isLoading
-                  ? "bg-indigo-400"
-                  : "bg-indigo-600 hover:bg-indigo-700"
-              } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
+              className={`w-full px-4 py-2 bg-blue-500 text-white rounded-md ${
+                isLoading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             >
               {isLoading ? "Signing up..." : "Sign up"}
             </button>
-            {/* {error && (
-              <div className="mt-2 text-center text-sm text-red-600">
-                {error}
-              </div>
-            )} */}
           </div>
         </form>
-        <div>
-          have an account already? <Link href="/login">log in </Link>
+        <div className="mt-1">
+          Do you an account already?{" "}
+          <Link href="/login" className="text-blue-500">
+            Log in{" "}
+          </Link>
         </div>
       </div>
     </div>
