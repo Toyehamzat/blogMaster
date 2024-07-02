@@ -11,13 +11,13 @@ const handler = async (data: InputType): Promise<ReturnType> => {
   } catch (error: any) {
     if (error.response && error.response.data && error.response.data.errors) {
       error.response.data.errors.forEach((err: any) => {
-        toast.error(err.msg);
+        toast.error(err.message);
       });
       return {
         error: "Login failed",
         fieldErrors: error.response.data.errors.reduce(
           (acc: any, curr: any) => {
-            acc[curr.param] = [curr.msg];
+            acc[curr.param] = [curr.message];
             return acc;
           },
           {}
