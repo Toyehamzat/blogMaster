@@ -11,6 +11,7 @@ import { FormErrors } from "./form-errors";
 
 interface FormInputProps {
   id: string;
+  name?: string;
   label?: string;
   type?: string;
   placeholder?: string;
