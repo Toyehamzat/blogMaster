@@ -3,7 +3,8 @@ import { persist } from "zustand/middleware";
 
 export interface UserAuthStore {
   isLoggedIn: boolean;
-  userLogin: () => void;
+  user: { id: string; username: string } | null;
+  userLogin: (user: { id: string; username: string }, token: string) => void;
   logout: () => void;
 }
 
@@ -11,15 +12,14 @@ export const useUserStore = create(
   persist<UserAuthStore>(
     (set) => ({
       isLoggedIn: false,
-      userLogin: () => {
-        const userLocalStorage = localStorage.getItem("token");
-        if (userLocalStorage) {
-          set({ isLoggedIn: true });
-        }
+      user: null,
+      userLogin: (user, token) => {
+        localStorage.setItem("token", token);
+        set({ isLoggedIn: true, user });
       },
       logout: () => {
-        set({ isLoggedIn: false });
-        localStorage.clear();
+        localStorage.removeItem("token");
+        set({ isLoggedIn: false, user: null });
       },
     }),
     {
