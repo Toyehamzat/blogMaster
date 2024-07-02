@@ -127,7 +127,7 @@ export default function SignUp({ data }: SignUpProps) {
             </button>
           </div>
         </form>
-        <div className="mt-1">
+        <div className="mt-5">
           Do you an account already?{" "}
           <Link href="/login" className="text-blue-500">
             Log in{" "}
