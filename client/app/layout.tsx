@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "BlogMaster",
-  description: "blogg",
+  description: "blog",
 };
 
 export default function RootLayout({
