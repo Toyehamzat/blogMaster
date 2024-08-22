@@ -1,10 +1,18 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+interface User {
+  id: string;
+  username: string;
+  email: string;
+}
+
 export interface UserAuthStore {
   isLoggedIn: boolean;
-  user: { id: string; username: string } | null;
-  userLogin: (user: { id: string; username: string }, token: string) => void;
+  user: User | null;
+  accessToken: string | null;
+  refreshToken: string | null;
+  userLogin: (user: User, accessToken: string, refreshToken: string) => void;
   logout: () => void;
 }
 
@@ -13,13 +21,22 @@ export const useUserStore = create(
     (set) => ({
       isLoggedIn: false,
       user: null,
-      userLogin: (user, token) => {
-        localStorage.setItem("token", token);
-        set({ isLoggedIn: true, user });
+      accessToken: null,
+      refreshToken: null,
+      userLogin: (user, accessToken, refreshToken) => {
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", refreshToken);
+        set({ isLoggedIn: true, user, accessToken, refreshToken });
       },
       logout: () => {
-        localStorage.removeItem("token");
-        set({ isLoggedIn: false, user: null });
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        set({
+          isLoggedIn: false,
+          user: null,
+          accessToken: null,
+          refreshToken: null,
+        });
       },
     }),
     {
