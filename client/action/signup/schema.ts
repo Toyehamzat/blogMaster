@@ -16,10 +16,18 @@ export const SignUpSchema = z
       .string()
       .min(6, "Password must consist of at least 6 characters")
       .nonempty("Password cannot be empty!")
+      .regex(
+        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/,
+        "Password must include one lowercase character, one uppercase character, a number, and a special character"
+      )
       .trim(),
     confirm_password: z
       .string()
       .nonempty("Confirm Password cannot be empty!")
+      .regex(
+        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/,
+        "Password must include one lowercase character, one uppercase character, a number, and a special character"
+      )
       .trim(),
   })
   .refine((data) => data.password === data.confirm_password, {
