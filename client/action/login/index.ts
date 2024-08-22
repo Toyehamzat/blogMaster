@@ -9,24 +9,32 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     const response = await api.post("/login", data);
     return { data: response.data };
   } catch (error: any) {
-    if (error.response && error.response.data && error.response.data.errors) {
+    if (error.response?.data?.errors) {
+      const fieldErrors = error.response.data.errors.reduce(
+        (acc: Record<string, string[]>, curr: any) => {
+          if (curr.param) {
+            acc[curr.param] = acc[curr.param] || [];
+            acc[curr.param].push(curr.message);
+          }
+          return acc;
+        },
+        {}
+      );
+
       error.response.data.errors.forEach((err: any) => {
         toast.error(err.message);
       });
+
       return {
         error: "Login failed",
-        fieldErrors: error.response.data.errors.reduce(
-          (acc: any, curr: any) => {
-            acc[curr.param] = [curr.message];
-            return acc;
-          },
-          {}
-        ),
+        fieldErrors: fieldErrors,
       };
     } else {
-      toast.error("An unexpected error occurred");
+      const errorMessage =
+        error.response?.data?.error || "An unexpected error occurred";
+      toast.error(errorMessage);
       return {
-        error: "An unexpected error occurred",
+        error: errorMessage,
       };
     }
   }
