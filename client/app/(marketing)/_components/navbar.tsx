@@ -7,7 +7,7 @@ import React from "react";
 import LogoutButton from "./logOutbtn";
 
 export const Navbar = () => {
-  const { isLoggedIn, user, logout } = useUserStore((state) => state);
+  const { isLoggedIn, user } = useUserStore((state) => state);
   const router = useRouter();
 
   return (
@@ -18,9 +18,7 @@ export const Navbar = () => {
           {isLoggedIn ? (
             <>
               <span>Welcome, {user?.username}</span>
-              <Button size="sm" variant="outline" onClick={logout}>
-                Logout
-              </Button>
+              <LogoutButton />
             </>
           ) : (
             <>
