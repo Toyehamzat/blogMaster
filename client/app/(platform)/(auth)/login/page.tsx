@@ -1,4 +1,5 @@
 "use client";
+
 import { useAction } from "@/hook/useAction";
 import { loginAction } from "@/action/login";
 import { toast } from "sonner";
@@ -11,11 +12,12 @@ import { FormInput } from "@/components/form/form-input";
 import { FormErrors } from "@/components/form/form-errors";
 
 type LoginResponse = {
-  message: string;
-  token: string;
+  accessToken: string;
+  refreshToken: string;
   user: {
     id: string;
     username: string;
+    email: string;
   };
 };
 
@@ -25,8 +27,8 @@ const LoginForm = () => {
 
   const { execute, fieldErrors, error, isLoading } = useAction(loginAction, {
     onSuccess: (data: LoginResponse) => {
-      toast.success(data.message);
-      userLogin(data.user, data.token);
+      toast.success("Login successful");
+      userLogin(data.user, data.accessToken, data.refreshToken);
       router.push("/");
     },
     onError: (error) => {
@@ -61,7 +63,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className=" flex items-center justify-center bg-gray-100">
+    <div className="flex items-center justify-center bg-gray-100">
       <div className="bg-white p-12 rounded shadow-md w-full max-w-md">
         <h2 className="text-2xl font-semibold mb-6 text-center">Login</h2>
         <form
@@ -79,7 +81,7 @@ const LoginForm = () => {
               name="username"
               label="Username"
               required
-              className="text-sm px-[10px] py-5 h-7 font-medium  hover:border-input focus:border-input transition truncate bg-transparent focus:bg-white"
+              className="text-sm px-[10px] py-5 h-7 font-medium hover:border-input focus:border-input transition truncate bg-transparent focus:bg-white"
             />
             <FormErrors id="username" errors={fieldErrors} />
           </div>
@@ -93,10 +95,11 @@ const LoginForm = () => {
               name="password"
               label="Password"
               required
-              className="text-sm px-[10px] py-5 h-7 font-medium  hover:border-input focus:border-input transition truncate bg-transparent focus:bg-white"
+              className="text-sm px-[10px] py-5 h-7 font-medium hover:border-input focus:border-input transition truncate bg-transparent focus:bg-white"
             />
             <FormErrors id="password" errors={fieldErrors} />
           </div>
+          {error && <div className="mb-4 text-red-500 text-sm">{error}</div>}
           <button
             type="submit"
             disabled={isLoading}
