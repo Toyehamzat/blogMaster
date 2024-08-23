@@ -1,23 +1,20 @@
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/stores/useAuthStore";
+import { toast } from "sonner";
 
 const LogoutButton = () => {
   const { logout } = useUserStore((state) => state);
   const router = useRouter();
 
-  // const handleLogout = async () => {
-  //   try {
-  //     await api.post("/logout");
-  //     logout;
-  //     router.push("/");
-  //   } catch (error: any) {
-  //     console.error("Logout failed", error);
-  //   }
-  // };
+  const handleLogout = async () => {
+    logout();
+    router.push("/");
+    toast.success("Loggged out successfully");
+  };
 
   return (
     <button
-      onClick={logout}
+      onClick={handleLogout}
       className="px-4 py-2 bg-red-500 text-white rounded-md"
     >
       Logout
