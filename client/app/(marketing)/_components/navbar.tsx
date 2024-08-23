@@ -17,7 +17,7 @@ export const Navbar = () => {
         <div className="space-x-4 md:block md:w-auto flex items-center justify-between w-full">
           {isLoggedIn ? (
             <>
-              <span>Welcome, {user?.username}</span>
+              <Button>Create post</Button>
               <LogoutButton />
             </>
           ) : (
