@@ -119,17 +119,7 @@ const login = [
 ];
 
 const logout = async (req, res) => {
-  try {
-    const { userId } = req.user;
-
-    // Remove refresh token from storage
-    tokenStorage.delete(userId.toString());
-
-    res.status(200).json({ message: "Logged out successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
-  }
+  console.log("user logged out");
 };
 
 const refreshToken = async (req, res) => {
