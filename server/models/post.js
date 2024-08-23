@@ -17,7 +17,10 @@ const postSchema = new mongoose.Schema(
       required: true,
       minLength: 1,
     },
-    // imageUrl: { type: String, required: true },
+    imageUrl: {
+      type: String, // Image URL as a string
+      required: true, // Set to true if the image is mandatory
+    },
     author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
