@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { Poppins } from "next/font/google";
-
+import { Provider } from "@/provider";
 export const metadata: Metadata = {
   title: "BlogMaster",
   description: "blog",
@@ -19,10 +19,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={textFont.className}>
-        {children}
-        <Toaster />
-      </body>
+      <Provider>
+        <body className={textFont.className}>
+          {children}
+          <Toaster />
+        </body>
+      </Provider>
     </html>
   );
 }
