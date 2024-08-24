@@ -16,10 +16,10 @@ import { Poppins } from "next/font/google";
 
 export default function Home() {
   return (
-    <main className="md:max-w-screen-2xl m-auto relative flex flex-col justify-center overflow-hidden">
+    <main className="pt-48 md:max-w-screen-2xl m-auto  flex flex-col justify-center overflow-hidden">
       <div
         className={cn(
-          "flex items-center justify-center flex-col relative z-10"
+          "flex items-center justify-center flex-col "
           //   headingFont.className
         )}
       >
