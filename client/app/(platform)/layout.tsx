@@ -9,10 +9,5 @@ export default function PlatformLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div className="h-full">
-      {children}
-      <Toaster />
-    </div>
-  );
+  return <div className="h-full">{children}</div>;
 }
