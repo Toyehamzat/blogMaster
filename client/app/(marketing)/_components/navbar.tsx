@@ -51,9 +51,9 @@ export const Navbar = () => {
                   <PenBox size={15} />
                   Create post
                 </DropdownMenuItem>
-                <hr />
+                <hr className="mt-8" />
                 <DropdownMenuItem className="flex text-center gap-1">
-                  <LogOutIcon size={14} />
+                  <LogOutIcon size={14} color="red" />
                   <LogoutButton />
                 </DropdownMenuItem>
               </DropdownMenuContent>
