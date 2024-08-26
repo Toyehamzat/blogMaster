@@ -62,20 +62,26 @@ const createPost = [
   body("content").notEmpty().withMessage("Content is required"),
   body("imageUrl").notEmpty().withMessage("Image URL is required"),
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     try {
-      const newPost = new Post({
-        ...req.body,
-        author: req.user._id,
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const { title, description, content, imageUrl } = req.body;
+      const post = new Post({
+        title,
+        description,
+        content,
+        imageUrl,
+        author: user._id,
       });
-      const savedPost = await newPost.save();
-      res.status(201).json(savedPost);
+      await post.save();
+      res.status(201).json({ message: "Post created successfully", post });
     } catch (error) {
-      res.status(500).json({ error: "Failed to create post" });
+      res
+        .status(500)
+        .json({ error: "Failed to create post", details: error.message });
     }
   },
 ];
