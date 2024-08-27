@@ -10,9 +10,8 @@ interface User {
 export interface UserAuthStore {
   isLoggedIn: boolean;
   user: User | null;
-  accessToken: string | null;
-  refreshToken: string | null;
-  userLogin: (user: User, accessToken: string, refreshToken: string) => void;
+  token: string | null;
+  userLogin: (user: User, token: string) => void;
   logout: () => void;
 }
 
@@ -21,21 +20,17 @@ export const useUserStore = create(
     (set) => ({
       isLoggedIn: false,
       user: null,
-      accessToken: null,
-      refreshToken: null,
-      userLogin: (user, accessToken, refreshToken) => {
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("refreshToken", refreshToken);
-        set({ isLoggedIn: true, user, accessToken, refreshToken });
+      token: null,
+      userLogin: (user, token) => {
+        localStorage.setItem("token", token);
+        set({ isLoggedIn: true, user, token });
       },
       logout: () => {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("token");
         set({
           isLoggedIn: false,
           user: null,
-          accessToken: null,
-          refreshToken: null,
+          token: null,
         });
       },
     }),

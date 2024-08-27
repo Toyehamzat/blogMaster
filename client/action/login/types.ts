@@ -7,8 +7,7 @@ export type InputType = z.infer<typeof LoginSchema>;
 export type ReturnType = ActionState<
   InputType,
   {
-    accessToken: string;
-    refreshToken: string;
+    token: string;
     user: {
       id: string;
       username: string;

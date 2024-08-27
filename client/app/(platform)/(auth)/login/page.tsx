@@ -12,8 +12,7 @@ import { FormInput } from "@/components/form/form-input";
 import { FormErrors } from "@/components/form/form-errors";
 
 type LoginResponse = {
-  accessToken: string;
-  refreshToken: string;
+  token: string;
   user: {
     id: string;
     username: string;
@@ -28,7 +27,7 @@ const LoginForm = () => {
   const { execute, fieldErrors, error, isLoading } = useAction(loginAction, {
     onSuccess: (data: LoginResponse) => {
       toast.success("Login successful");
-      userLogin(data.user, data.accessToken, data.refreshToken);
+      userLogin(data.user, data.token);
       router.push("/");
     },
     onError: (error) => {
