@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const { body, validationResult } = require("express-validator");
 const User = require("../models/user");
 const rateLimit = require("express-rate-limit");
+const passport = require("passport");
 
 // Load environment variables
 require("dotenv").config();
@@ -79,36 +80,49 @@ const signup = [
 
 const login = [
   loginLimiter,
-  body("username").trim().escape(),
-  body("password").trim(),
-  async (req, res) => {
+  body("username")
+    .trim()
+    .isLength({ min: 3 })
+    .escape()
+    .withMessage("Username must consist of at least 3 characters"),
+  body("password")
+    .trim()
+    .isLength({ min: 6 })
+    .escape()
+    .withMessage("Password must consist of at least 6 characters"),
+  (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-
-    try {
-      const { username, password } = req.body;
-      const user = await User.findOne({ username });
-
-      if (!user || !(await bcrypt.compare(password, user.password))) {
-        return res.status(401).json({ error: "Invalid credentials" });
+    next();
+  },
+  (req, res, next) => {
+    passport.authenticate("local", { session: false }, (err, user, info) => {
+      if (err) {
+        return res.status(500).json({ error: "Authentication error" });
       }
-
-      const accessToken = jwt.sign({ userId: user._id }, JWT_SECRET, {
-        expiresIn: "15m",
-      });
-
-      const refreshToken = jwt.sign({ userId: user._id }, JWT_REFRESH_SECRET, {
-        expiresIn: "7d",
-      });
-
-      // Store refresh token in memory
-      tokenStorage.set(user._id.toString(), refreshToken);
-
+      if (!user) {
+        return res.status(401).json({ error: info.message || "Unauthorized" });
+      }
+      req.user = user;
+      next();
+    })(req, res, next);
+  },
+  (req, res) => {
+    try {
+      const user = req.user;
+      const token = jwt.sign(
+        {
+          sub: user._id,
+          username: user.username,
+          email: user.email,
+        },
+        JWT_SECRET,
+        { expiresIn: "1d" } // Token expires in 1 day
+      );
       res.status(200).json({
-        accessToken,
-        refreshToken,
+        token,
         user: { id: user._id, username: user.username, email: user.email },
       });
     } catch (error) {
@@ -117,7 +131,6 @@ const login = [
     }
   },
 ];
-
 const logout = async (req, res) => {
   console.log("user logged out");
 };
