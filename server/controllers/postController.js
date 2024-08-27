@@ -51,12 +51,6 @@ const getLatestPosts = async (req, res) => {
 
 // Create a new post
 const createPost = [
-  async (req, res, next) => {
-    if (!req.user) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-    next();
-  },
   body("title").notEmpty().withMessage("Title is required"),
   body("description").notEmpty().withMessage("Description is required"),
   body("content").notEmpty().withMessage("Content is required"),
@@ -68,7 +62,12 @@ const createPost = [
         return res.status(400).json({ errors: errors.array() });
       }
 
+      const user = req.user;
       const { title, description, content, imageUrl } = req.body;
+
+      if (!user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
       const post = new Post({
         title,
         description,
