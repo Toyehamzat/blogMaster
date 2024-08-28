@@ -79,10 +79,11 @@ const signup = [
 ];
 
 const login = [
-  loginLimiter,
+  // loginLimiter,
   body("username")
     .trim()
     .isLength({ min: 3 })
+
     .escape()
     .withMessage("Username must consist of at least 3 characters"),
   body("password")
