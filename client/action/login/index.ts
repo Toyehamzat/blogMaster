@@ -7,6 +7,7 @@ import { InputType, ReturnType } from "./types";
 const handler = async (data: InputType): Promise<ReturnType> => {
   try {
     const response = await api.post("/login", data);
+    localStorage.setItem("token", response.data.token);
     return { data: response.data };
   } catch (error: any) {
     if (error.response?.data?.errors) {
