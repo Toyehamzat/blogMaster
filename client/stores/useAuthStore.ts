@@ -22,11 +22,14 @@ export const useUserStore = create(
       user: null,
       token: null,
       userLogin: (user, token) => {
-        localStorage.setItem("token", token);
-        set({ isLoggedIn: true, user, token });
+        const userlocalstorage = localStorage.getItem("token");
+
+        if (userlocalstorage) {
+          set({ isLoggedIn: true, user, token });
+        }
       },
       logout: () => {
-        localStorage.removeItem("token");
+        localStorage.clear();
         set({
           isLoggedIn: false,
           user: null,
